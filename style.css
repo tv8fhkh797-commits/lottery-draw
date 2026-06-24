@@ -9,7 +9,7 @@
 
 body {
     min-height: 100vh;
-    padding: 20px 12px;
+    padding: 16px 10px;
     position: relative;
     overflow-x: hidden;
     background-color: #fff9f0;
@@ -32,7 +32,7 @@ body {
     opacity: 0.6;
 }
 
-/* 主容器居中 */
+/* 主容器居中，固定宽度限制 */
 .container {
     max-width: 950px;
     margin: 0 auto;
@@ -42,13 +42,13 @@ body {
 /* 顶部标题 */
 .title-box {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 24px;
 }
 .title-box h1 {
-    font-size: clamp(26px,6vw,40px);
+    font-size: clamp(28px,6vw,40px);
     color: #ff7eb3;
     letter-spacing: 2px;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 .title-box p {
     font-size: 16px;
@@ -59,7 +59,7 @@ body {
 .card {
     background: #ffffff;
     border-radius: 24px;
-    padding: 20px 18px;
+    padding: 20px 16px;
     margin-bottom: 20px;
     box-shadow: 0 4px 15px rgba(255, 160, 190, 0.18);
     border: 3px solid #ffe6ef;
@@ -68,7 +68,7 @@ body {
 .card-header {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     margin-bottom: 14px;
 }
 .card-header h2 {
@@ -107,7 +107,7 @@ body {
 .btn {
     border: none;
     border-radius: 999px;
-    padding: 12px 24px;
+    padding: 12px 20px;
     font-size: clamp(16px,3.5vw,20px);
     font-weight: bold;
     cursor: pointer;
@@ -136,19 +136,19 @@ body {
     background: linear-gradient(135deg, #ff97c1, #ff6699);
 }
 
-/* 按钮组布局 */
+/* 按钮组布局：自动换行，不挤压 */
 .btn-group {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     justify-content: center;
     flex-wrap: wrap;
-    margin-bottom: 20px;
+    margin: 20px 0;
 }
 
-/* 抽奖照片大屏容器 */
+/* 抽奖照片大屏容器，高度自适应不溢出 */
 .draw-screen {
     width: 100%;
-    height: clamp(240px,50vw,320px);
+    height: clamp(200px,45vw,320px);
     background: #fff0f7;
     border-radius: 20px;
     border: 4px dashed #ffb6d2;
@@ -162,12 +162,13 @@ body {
     font-size: clamp(24px,6vw,40px);
     color: #ff6699;
     text-align: center;
+    padding: 10px;
 }
 .draw-photo {
     max-width: 80%;
     max-height: 90%;
     border-radius: 16px;
-    object-fit: cover;
+    object-fit: contain;
     display: none;
 }
 
@@ -175,24 +176,24 @@ body {
 .record-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
     list-style: none;
     justify-content: center;
 }
 .record-list li {
     background: #e0f4ff;
-    padding: 6px 12px;
+    padding: 6px 10px;
     border-radius: 99px;
     font-size: clamp(14px,3vw,17px);
     color: #2979bf;
     border: 2px solid #b8e0ff;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 .record-list li img {
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     object-fit: cover;
 }
@@ -201,15 +202,18 @@ body {
     display: none;
 }
 
-/* 小屏手机适配 */
+/* 小屏手机强制适配兜底规则 */
 @media screen and (max-width:480px) {
     body {
-        padding: 15px 10px;
+        padding: 12px 8px;
     }
     .card {
-        padding: 16px 14px;
+        padding: 16px 12px;
     }
     .btn-group {
-        gap: 10px;
+        gap: 8px;
+    }
+    .title-box h1 {
+        letter-spacing: 1px;
     }
 }
