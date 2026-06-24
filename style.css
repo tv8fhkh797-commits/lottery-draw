@@ -3,19 +3,19 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    /* 圆润卡通字体 */
     font-family: "微软雅黑", "幼圆", sans-serif;
+    /* 所有元素强制不超出屏幕 */
+    max-width: 100%;
 }
 
 body {
     min-height: 100vh;
-    padding: 40px 15px;
+    padding: 20px 12px;
     position: relative;
     overflow-x: hidden;
     background-color: #fff9f0;
 }
 
-/* 卡通云朵背景装饰 */
 .bg-decor {
     position: fixed;
     width: 100%;
@@ -32,45 +32,45 @@ body {
     opacity: 0.6;
 }
 
-/* 主容器居中 */
 .container {
     max-width: 950px;
     margin: 0 auto;
+    width: 100%;
 }
 
-/* 顶部标题 */
 .title-box {
     text-align: center;
-    margin-bottom: 35px;
+    margin-bottom: 30px;
 }
 .title-box h1 {
-    font-size: 40px;
+    /* 手机自动缩小标题字号 */
+    font-size: clamp(26px,6vw,40px);
     color: #ff7eb3;
     letter-spacing: 2px;
     margin-bottom: 8px;
 }
 .title-box p {
-    font-size: 18px;
+    font-size: 16px;
     color: #777;
 }
 
-/* 通用卡片样式：超大圆角、马卡龙底色、柔和阴影 */
 .card {
     background: #ffffff;
     border-radius: 24px;
-    padding: 25px 30px;
-    margin-bottom: 22px;
+    padding: 20px 18px;
+    margin-bottom: 20px;
     box-shadow: 0 4px 15px rgba(255, 160, 190, 0.18);
     border: 3px solid #ffe6ef;
+    width: 100%;
 }
 .card-header {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
 }
 .card-header h2 {
-    font-size: 24px;
+    font-size: clamp(18px,4vw,24px);
     color: #ff6699;
 }
 .card-content {
@@ -80,7 +80,6 @@ body {
     gap: 10px;
 }
 
-/* 导入成功指示灯 */
 .status-light {
     display: inline-block;
     width: 18px;
@@ -94,22 +93,24 @@ body {
     box-shadow: 0 0 10px #7be38a;
 }
 
-/* 提示小字 */
 .tips {
-    font-size: 15px;
+    font-size: 14px;
     color: #999;
+    text-align: center;
 }
 
-/* 通用卡通按钮：超大圆角、柔和渐变、hover弹跳 */
 .btn {
     border: none;
     border-radius: 999px;
-    padding: 14px 38px;
-    font-size: 20px;
+    padding: 12px 24px;
+    /* 手机缩小按钮内边距 */
+    font-size: clamp(16px,3.5vw,20px);
     font-weight: bold;
     cursor: pointer;
     transition: all 0.2s ease;
     color: white;
+    width: 100%;
+    max-width: 260px;
 }
 .btn:hover {
     transform: translateY(-3px);
@@ -118,7 +119,6 @@ body {
 .btn:active {
     transform: translateY(0);
 }
-/* 按钮马卡龙配色 */
 .btn-blue {
     background: linear-gradient(135deg, #74b9ff, #48a0e8);
 }
@@ -132,22 +132,22 @@ body {
     background: linear-gradient(135deg, #ff97c1, #ff6699);
 }
 
-/* 按钮组布局 */
 .btn-group {
     display: flex;
-    gap: 16px;
+    gap: 12px;
     justify-content: center;
     flex-wrap: wrap;
-    margin-bottom: 22px;
+    margin-bottom: 20px;
 }
 
-/* 抽奖大屏 */
 .draw-screen {
     width: 100%;
-    height: 230px;
-    line-height: 230px;
+    /* 手机自适应高度，不会溢出 */
+    height: clamp(160px,35vw,230px);
+    line-height: clamp(160px,35vw,230px);
     text-align: center;
-    font-size: 72px;
+    /* 文字动态适配屏幕 */
+    font-size: clamp(36px,12vw,72px);
     font-weight: bold;
     color: #ff6699;
     background: #fff0f7;
@@ -155,24 +155,35 @@ body {
     border: 4px dashed #ffb6d2;
 }
 
-/* 中奖记录列表 */
 .record-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 10px;
     list-style: none;
     justify-content: center;
 }
 .record-list li {
     background: #e0f4ff;
-    padding: 9px 20px;
+    padding: 8px 16px;
     border-radius: 99px;
-    font-size: 19px;
+    font-size: clamp(15px,3vw,19px);
     color: #2979bf;
     border: 2px solid #b8e0ff;
 }
 
-/* 隐藏输入框，不占用页面 */
 .input-box {
     display: none;
+}
+
+/* 适配小屏手机补充规则 */
+@media screen and (max-width:480px) {
+    body {
+        padding: 15px 10px;
+    }
+    .card {
+        padding: 16px 14px;
+    }
+    .btn-group {
+        gap: 10px;
+    }
 }
