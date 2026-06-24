@@ -2,48 +2,53 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <!-- 修复手机错乱核心标签，强制禁止缩放、适配屏幕 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>幼儿园欢乐抽奖小乐园</title>
+    <title>幼儿园欢乐抽奖乐园</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="bg-decor"></div>
     <div class="container">
+        <!-- 顶部标题区 -->
         <div class="title-box">
-            <h1>🌈 幼儿园欢乐抽奖乐园 🌈</h1>
-            <p>导入小朋友名单，公平抽幸运宝贝！</p>
+            <h1>🌈 幼儿园抽奖乐园 🌈</h1>
+            <p>上传小朋友头像，公平抽幸运宝贝！</p>
         </div>
 
+        <!-- 图片上传卡片（替换原来Excel） -->
         <div class="card import-card">
             <div class="card-header">
-                <h2>📂 导入小朋友名单</h2>
+                <h2>📸 上传小朋友头像照片</h2>
                 <span class="status-light" id="statusLight"></span>
             </div>
             <div class="card-content">
-                <input type="file" id="excelFile" accept=".xlsx,.xls" hidden>
-                <button id="importBtn" class="btn btn-blue">上传Excel名单</button>
-                <p class="tips">小贴士：Excel第一列写小朋友名字，一行一个哦</p>
+                <input type="file" id="imgFile" accept="image/*" multiple hidden>
+                <button id="importBtn" class="btn btn-blue">批量选择照片</button>
+                <p class="tips">小贴士：可多选图片，一张照片对应一位小朋友</p>
             </div>
         </div>
 
+        <!-- 隐藏文字输入框，废弃不用 -->
         <div class="input-box" hidden>
             <textarea id="nameList"></textarea>
         </div>
 
+        <!-- 中间照片抽奖大屏 -->
         <div class="card draw-card">
             <div class="draw-screen" id="showName">
-                等待导入名单开始抽奖✨
+                <div class="empty-tip">等待上传照片开始抽奖✨</div>
+                <img id="drawImg" class="draw-photo" src="" alt="中奖头像">
             </div>
         </div>
 
+        <!-- 操作按钮组 -->
         <div class="btn-group">
             <button id="startBtn" class="btn btn-green">🎉 开始滚动</button>
             <button id="stopBtn" class="btn btn-orange">🎁 停止开奖</button>
             <button id="resetBtn" class="btn btn-pink">🔄 全部重置</button>
         </div>
 
+        <!-- 中奖小朋友记录（头像+名字） -->
         <div class="card record-card">
             <div class="card-header">
                 <h2>🏆 幸运小宝贝名单</h2>

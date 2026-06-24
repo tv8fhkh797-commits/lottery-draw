@@ -1,122 +1,116 @@
-// 获取页面元素
-const nameListDom = document.getElementById('nameList');
+// 获取页面DOM元素
+const imgFileDom = document.getElementById('imgFile');
+const importBtn = document.getElementById('importBtn');
+const statusLight = document.getElementById('statusLight');
 const startBtn = document.getElementById('startBtn');
 const stopBtn = document.getElementById('stopBtn');
 const resetBtn = document.getElementById('resetBtn');
-const showNameDom = document.getElementById('showName');
+const drawScreen = document.getElementById('showName');
+const drawImg = document.getElementById('drawImg');
+const emptyTip = drawScreen.querySelector('.empty-tip');
 const recordListDom = document.getElementById('recordList');
-// 新增：Excel导入相关元素
-const excelFileDom = document.getElementById('excelFile');
-const importBtn = document.getElementById('importBtn');
 
 let timer = null; // 滚动定时器
-let allNames = []; // 全部参与人
-let winnerList = []; // 已中奖名单
+let allPhotoList = []; // 所有上传照片对象 {url:图片地址,name:文件名}
+let winnerIndexArr = []; // 已中奖照片下标，去重
 
-// -------------------------- 新增：Excel导入核心逻辑 --------------------------
-// 点击导入按钮，触发文件选择
-importBtn.onclick = function () {
-    excelFileDom.click(); // 触发隐藏的文件选择框
-}
+// 1、点击上传按钮触发图片选择
+importBtn.onclick = () => imgFileDom.click();
 
-// 监听文件选择变化，读取解析Excel
-excelFileDom.onchange = function (e) {
-    const file = e.target.files[0];
-    if (!file) return;
+// 2、监听图片多选上传
+imgFileDom.onchange = function(e) {
+    const fileArr = Array.from(e.target.files);
+    if(fileArr.length === 0) return;
 
-    // 校验文件格式
-    const fileName = file.name.toLowerCase();
-    if (!fileName.endsWith('.xlsx') && !fileName.endsWith('.xls')) {
-        alert('请上传.xlsx或.xls格式的Excel文件！');
-        return;
-    }
+    // 清空旧照片
+    allPhotoList = [];
+    // 遍历读取每张图片
+    fileArr.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = ev => {
+            allPhotoList.push({
+                url: ev.target.result,
+                name: file.name.replace(/\.\w+$/, '') // 去掉后缀当名字
+            });
+        };
+        reader.readAsDataURL(file);
+    });
 
-    // 读取Excel文件
-    const reader = new FileReader();
-    reader.onload = function (event) {
-        try {
-            // 解析Excel文件
-            const workbook = XLSX.read(event.target.result, { type: 'binary' });
-            // 读取第一个工作表（Sheet）
-            const firstSheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[firstSheetName];
-            // 把工作表转换成二维数组
-            const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-            // 提取第一列的人名，过滤空行和空值
-            const nameList = data
-                .map(row => row[0]) // 取每行第一列
-                .filter(name => name && String(name).trim() !== ''); // 过滤空值
-
-            if (nameList.length === 0) {
-                alert('Excel第一列没有读取到有效人名，请检查文件！');
-                return;
-            }
-
-            // 把人名用换行符拼接，填充到文本框里
-            nameListDom.value = nameList.join('\n');
-            alert(`成功导入${nameList.length}个参与人！`);
-
-        } catch (error) {
-            alert('Excel文件解析失败，请检查文件是否损坏！');
-            console.error(error);
+    // 等待全部图片读取完成
+    setTimeout(() => {
+        if(allPhotoList.length === 0) {
+            alert("未识别到图片，请重新上传！");
+            return;
         }
-    };
-    reader.readAsBinaryString(file);
+        // 点亮成功指示灯
+        statusLight.classList.add('success');
+        alert(`成功导入${allPhotoList.length}张小朋友照片！`);
+        // 重置大屏显示
+        emptyTip.style.display = "block";
+        drawImg.style.display = "none";
+    }, 600);
 }
-// -----------------------------------------------------------------------------
 
-// 开始抽奖
-startBtn.onclick = function () {
-    // 读取输入框名单，切割成数组
-    const rawText = nameListDom.value.trim();
-    if (!rawText) {
-        alert('请先输入参与名单！');
+// 3、开始滚动抽奖（循环切换照片）
+startBtn.onclick = function() {
+    if(allPhotoList.length === 0) {
+        alert("请先上传小朋友照片！");
         return;
     }
-    allNames = rawText.split('\n').filter(item => item.trim() !== '');
-
-    // 过滤掉已经中过奖的人，不重复中奖
-    const canDraw = allNames.filter(name => !winnerList.includes(name));
-    if (canDraw.length === 0) {
-        alert('所有人都已经抽过奖，请重置！');
+    // 筛选还没中过奖的照片
+    const canDrawList = allPhotoList.filter((_, index) => !winnerIndexArr.includes(index));
+    if(canDrawList.length === 0) {
+        alert("所有小朋友都抽过啦，请重置！");
         return;
     }
 
-    // 滚动名字动画
+    // 清除旧计时器，开始快速滚动图片
     clearInterval(timer);
     timer = setInterval(() => {
-        const randomIndex = Math.floor(Math.random() * canDraw.length);
-        showNameDom.innerText = canDraw[randomIndex];
-    }, 80);
+        // 随机取一张未中奖照片
+        const randomIdx = Math.floor(Math.random() * canDrawList.length);
+        const randomPhoto = canDrawList[randomIdx];
+        emptyTip.style.display = "none";
+        drawImg.style.display = "block";
+        drawImg.src = randomPhoto.url;
+    }, 90);
 }
 
-// 停止抽奖，确定中奖人
-stopBtn.onclick = function () {
+// 4、停止抽奖，定格中奖照片
+stopBtn.onclick = function() {
     clearInterval(timer);
-    if (!allNames.length) return;
+    if(allPhotoList.length === 0) return;
 
-    const rawText = nameListDom.value.trim();
-    allNames = rawText.split('\n').filter(item => item.trim() !== '');
-    const canDraw = allNames.filter(name => !winnerList.includes(name));
+    const canDrawList = allPhotoList.filter((_, index) => !winnerIndexArr.includes(index));
+    const randomIdx = Math.floor(Math.random() * canDrawList.length);
+    const winnerPhoto = canDrawList[randomIdx];
+    // 获取原始下标，存入中奖数组去重
+    const realIndex = allPhotoList.findIndex(item => item.url === winnerPhoto.url);
+    winnerIndexArr.push(realIndex);
 
-    // 随机选出中奖者
-    const randomIndex = Math.floor(Math.random() * canDraw.length);
-    const winner = canDraw[randomIndex];
-    showNameDom.innerText = `恭喜：${winner}`;
+    // 定格中奖照片
+    emptyTip.style.display = "none";
+    drawImg.style.display = "block";
+    drawImg.src = winnerPhoto.url;
 
-    // 存入中奖记录
-    winnerList.push(winner);
+    // 添加到中奖记录（小头像+名字）
     const li = document.createElement('li');
-    li.innerText = winner;
+    li.innerHTML = `<img src="${winnerPhoto.url}">${winnerPhoto.name}`;
     recordListDom.appendChild(li);
 }
 
-// 重置所有记录
-resetBtn.onclick = function () {
+// 5、重置：仅清空中奖记录，保留照片库、绿灯不灭
+resetBtn.onclick = function() {
     clearInterval(timer);
-    showNameDom.innerText = '等待开始抽奖';
-    winnerList = [];
-    recordListDom.innerHTML = '';
-    excelFileDom.value = ''; // 清空已选文件
+    // 大屏恢复初始提示文字
+    emptyTip.style.display = "block";
+    drawImg.style.display = "none";
+    drawImg.src = "";
+    // 清空中奖记录数组，允许所有人重新参与抽奖
+    winnerIndexArr = [];
+    // 清空页面展示的中奖名单
+    recordListDom.innerHTML = "";
+    // 不执行熄灭绿灯代码，指示灯保持绿色
+    // statusLight.classList.remove('success');
+    // 不清除 allPhotoList 照片库，不重置上传文件
 }
